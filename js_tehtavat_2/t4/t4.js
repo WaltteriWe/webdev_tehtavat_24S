@@ -1,3 +1,5 @@
+'use strict';
+
 function sortarray(numbers) {
     return numbers.sort((a, b) => a - b);
 }

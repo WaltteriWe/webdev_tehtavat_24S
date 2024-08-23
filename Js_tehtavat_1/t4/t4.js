@@ -1,3 +1,5 @@
+'use strict';
+
 function calculateGrade() {
     const score = parseInt(document.getElementById("grade").value);
     let grade;

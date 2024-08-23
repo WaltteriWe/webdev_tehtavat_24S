@@ -1,3 +1,5 @@
+'use strict';
+
 let fruits = ['apple', 'banana', 'orange', 'grape', 'kiwi'];
 console.log(fruits);
 console.log(fruits.length);

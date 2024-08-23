@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 let celsius = prompt("Syötä lämpötila celsius-asteina:");
 let fahrenheit = (celsius * 9) / 5 + 32;
