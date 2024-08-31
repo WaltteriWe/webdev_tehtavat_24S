@@ -771,3 +771,6 @@ const restaurants = [
 ];
 
 // your code here
+
+const sortRestaurants = (restaurants) => {
+  

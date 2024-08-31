@@ -12,8 +12,11 @@ ul {
 li {
   border: 1px solid #000;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   line-height: 3rem;
+  text-align: left;
+  padding-right: 1rem;
 }
 
 label {
@@ -33,9 +36,9 @@ li button {
 }
 
 li input {
-  position: absolute;
-  margin: 1rem 3rem;
+  margin: 0 1rem 0 0;
   cursor: pointer;
+  position: static;
 }
 
 li input[type='checkbox']:checked + label {

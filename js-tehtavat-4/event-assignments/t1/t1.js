@@ -28,3 +28,23 @@ const todoList = [
 ];
 
 // add your code here
+for (const todo of todoList) {
+  const list = document.getElementById('todoList');
+  const container = document.createElement('li');
+  list.appendChild(container);
+  container.innerText = todo['id'];
+  container.innerText = todo['task'];
+  document.createElement('input');
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  container.appendChild(checkbox);
+  checkbox.checked = todo.completed;
+  checkbox.addEventListener('change', function() {
+    todo.completed = checkbox.checked;
+    console.log(todo.completed);
+  });
+  container.id = todo['id'];
+  console.log(container);
+}
+
+
