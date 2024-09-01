@@ -772,5 +772,50 @@ const restaurants = [
 
 // your code here
 
-const sortRestaurants = (restaurants) => {
-  
+const calculateDistance = (lat1, long1, lat2, long2) => {
+  return Math.sqrt((lat1 - lat2) ** 2 + (long1 - long2) ** 2);
+};
+
+const success = (pos) => {
+  const crd = pos.coords;
+  const lat = crd.latitude;
+  const long = crd.longitude;
+
+  console.log(lat, long);
+
+  restaurants.sort((a, b) => {
+    const [latA, longA] = a.location.coordinates;
+    const [latB, longB] = b.location.coordinates;
+
+    const distanceA = calculateDistance(lat, long, longA, latA);
+    const distanceB = calculateDistance(lat, long, longB, latB);
+
+    return distanceA - distanceB;
+  });
+
+  console.log('Sorted version: ', restaurants);
+
+  const table = document.querySelector('table');
+
+  for (const res of restaurants) {
+    const trNode = document.createElement('tr');
+    const tdNameNode = document.createElement('td');
+    tdNameNode.textContent = res.name;
+    const tdAddresNode = document.createElement('td');
+    tdAddresNode.textContent = res.address;
+    trNode.append(tdNameNode, tdAddresNode);
+    table.appendChild(trNode);
+  }
+};
+
+const options = {
+  enableHighAccuracy: true,
+  timeout: 5000,
+  maximumAge: 0,
+};
+
+function error(err) {
+  console.warn(`ERROR(${err.code}): ${err.message}`);
+}
+
+navigator.geolocation.getCurrentPosition(success, error, options);

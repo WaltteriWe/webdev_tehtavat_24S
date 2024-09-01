@@ -771,3 +771,26 @@ const restaurants = [
 ];
 
 // your code here
+const map = L.map('map').setView([60.1708, 24.9419], 12);
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution:
+    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+}).addTo(map);
+for (const restaurant of restaurants) {
+  const marker = L.marker([restaurant.location.coordinates[1], restaurant.location.coordinates[0]]).addTo(map);
+  const container = document.createElement('div');
+  const h3 = document.createElement('h3');
+  h3.textContent = restaurant.name;
+
+  const p = document.createElement('p');
+  p.id = 'p';
+  p.textContent = restaurant.address;
+  const br = document.createElement('br');
+
+  container.append(h3, p);
+
+  marker.bindPopup(container);
+}
+
