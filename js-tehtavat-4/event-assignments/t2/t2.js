@@ -771,26 +771,54 @@ const restaurants = [
 ];
 
 // your code here
-const map = L.map('map').setView([60.1708, 24.9419], 12);
+const kohde = document.querySelector('tbody');
+const modaali = document.querySelector('dialog');
+const info = document.querySelector('#info');
+const closeModal = document.querySelector('#close-modal');
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution:
-    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-}).addTo(map);
+closeModal.addEventListener('click', function () {
+  modaali.close();
+});
+
+console.log(restaurants);
+restaurants.sort((a,b) => a.name.localeCompare(b.name));
+console.log(restaurants);
+
 for (const restaurant of restaurants) {
-  const marker = L.marker([restaurant.location.coordinates[1], restaurant.location.coordinates[0]]).addTo(map);
-  const container = document.createElement('div');
-  const h3 = document.createElement('h3');
-  h3.textContent = restaurant.name;
+  if (restaurant) {
+    const nimi = document.createElement('td');
+    nimi.textContent = restaurant.name;
 
-  const p = document.createElement('p');
-  p.id = 'p';
-  p.textContent = restaurant.address;
-  const br = document.createElement('br');
+    const osoite = document.createElement('td');
+    osoite.textContent = restaurant.address;
 
-  container.append(h3, p);
+    const rivi = document.createElement('tr');
 
-  marker.bindPopup(container);
+    rivi.addEventListener('click', function () {
+      const korostetut = document.querySelectorAll('.highlight');
+      for (const korostettu of korostetut) {
+        korostettu.classList.remove('highlight');
+      }
+
+      rivi.classList.add('highlight');
+      modaali.showModal();
+      const ravintolaHTML = `
+      <header>
+      <h3>${restaurant.name}</h3>
+      <p>${restaurant.company}</p>
+      </header>
+      <address>
+        ${restaurant.address}<br>
+        ${restaurant.postalCode}<br>
+        ${restaurant.city}<br>
+        ${restaurant.phone}<br>
+      </address>
+      `;
+      info.innerHTML = ravintolaHTML;
+    });
+    
+
+    rivi.append(nimi, osoite);
+    kohde.append(rivi)
+  }
 }
-

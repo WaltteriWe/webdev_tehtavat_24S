@@ -30,7 +30,7 @@ const todoList = [
 // add your code here
 const lista = document.querySelector('#target');
 
-for (const todo of todolist) {
+for (const todo of todoList) {
   const input = document.createElement('input');
   input.type = 'checkbox';
   input.id = 'todo-' + todo.id;

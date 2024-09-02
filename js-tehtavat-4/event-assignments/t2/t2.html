@@ -5,21 +5,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <link rel="stylesheet" href="t4.css">
-  <script src="t4.js" defer></script>
+  <link rel="stylesheet" href="t2.css">
+  <script src="t2.js" defer></script>
 </head>
 
 <body>
   <h1>Restaurants</h1>
   <table>
+    <thead>
     <tr>
       <th>Name</th>
       <th>Address</th>
     </tr>
+  </thead>
+  <tbody>
     <!-- add restaurants here -->
-     <div id="target"></div>
+  </tbody>
   </table>
+  <!-- modal -->
+  <dialog>
+    <!-- add restaurant info here when restaurant is clicked -->
+     <div>
+      <button id="close-modal">Close</button>
+     </div>
+    <div id="info"></div>
 
+  </dialog>
 </body>
 
 </html>
