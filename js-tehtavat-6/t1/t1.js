@@ -7,57 +7,68 @@ const kohde = document.querySelector('tbody');
 const modaali = document.querySelector('dialog');
 const info = document.querySelector('#info');
 const closeModal = document.querySelector('#close-modal');
+const sodexoBTN = document.querySelector('#sodexo');
+const compassBTN = document.querySelector('#compass');
+const resetBTN = document.querySelector('#reset');
 
 closeModal.addEventListener('click', () => {
   modaali.close();
 });
 
-const teeRavintolaLista = async () => {
-  try {
-    const restaurants = await fetchData(apiURL + '/api/v1/restaurants');
+const haeRavintolat = async () => {
+  return await fetchData(apiURL + '/api/v1/restaurants');
+};
 
-    console.log(restaurants);
-    restaurants.sort((a, b) => a.name.localeCompare(b.name));
-    console.log(restaurants);
+const teeRavintolaLista = async (restaurants) => {
+  kohde.innerHTML = '';
+  sodexoBTN.addEventListener('click', () => {
+    const filteredRestaurants = restaurants.filter(
+      (restaurant) => restaurant.company === 'Sodexo'
+    );
+    teeRavintolaLista(filteredRestaurants);
+  });
 
-    restaurants.forEach((restaurant) => {
-      if (restaurant) {
-        // ravintolarivin html rivi
-        const rivi = restaurantRow(restaurant);
+  console.log(restaurants);
+  restaurants.sort((a, b) => a.name.localeCompare(b.name));
+  console.log(restaurants);
 
-        rivi.addEventListener('click', async () => {
-          try {
-            const korostetut = document.querySelectorAll('.highlight');
-            korostetut.forEach((korostettu) => {
-              korostettu.classList.remove('highlight');
-            });
+  restaurants.forEach((restaurant) => {
+    if (restaurant) {
+      // ravintolarivin html rivi
+      const rivi = restaurantRow(restaurant);
 
-            rivi.classList.add('highlight');
-            // hae päivän ruokalista
-            const menu = await fetchData(
-              `${apiURL}/api/v1/restaurants/daily/${restaurant._id}/fi`
-            );
+      rivi.addEventListener('click', async () => {
+        try {
+          const korostetut = document.querySelectorAll('.highlight');
+          korostetut.forEach((korostettu) => {
+            korostettu.classList.remove('highlight');
+          });
 
-            console.log('päivän lista', menu);
+          rivi.classList.add('highlight');
+          // hae päivän ruokalista
+          const menu = await fetchData(
+            `${apiURL}/api/v1/restaurants/daily/${restaurant._id}/fi`
+          );
 
-            // rakenna listan HTML (muista for lause)
+          console.log('päivän lista', menu);
 
-            modaali.showModal();
-            const ravintolaHTML = restaurantModal(restaurant, menu.courses);
-            info.innerHTML = '';
-            info.insertAdjacentHTML('beforeend', ravintolaHTML);
-          } catch (error) {
-            console.error('Error fetching daily menu:', error);
-          }
-        });
+          // rakenna listan HTML (muista for lause)
 
-        kohde.append(rivi);
-      }
-    });
-  } catch (error) {
-    console.error('Error fetching restaurants:', error);
-  }
+          modaali.showModal();
+          const ravintolaHTML = restaurantModal(restaurant, menu.courses);
+          info.innerHTML = '';
+          info.insertAdjacentHTML('beforeend', ravintolaHTML);
+        } catch (error) {
+          console.error('Error fetching daily menu:', error);
+        }
+      });
+
+      kohde.append(rivi);
+    }
+  });
 };
 
 // Call the function to load restaurants
-teeRavintolaLista();
+const raflat = await haeRavintolat();
+
+teeRavintolaLista(raflat);
