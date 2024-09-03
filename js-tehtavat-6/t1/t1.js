@@ -1,5 +1,7 @@
 'use strict';
+import {restaurantModal, restaurantRow} from './components.js';
 import {fetchData} from './fetchdata.js';
+import {apiURL} from './variables.js';
 
 const kohde = document.querySelector('tbody');
 const modaali = document.querySelector('dialog');
@@ -10,79 +12,52 @@ closeModal.addEventListener('click', () => {
   modaali.close();
 });
 
-const apiURL = 'https://media1.edu.metropolia.fi/restaurant';
-
 const teeRavintolaLista = async () => {
-  // eslint-disable-next-line no-undef
-  const restaurants = await fetchData(apiURL + '/api/v1/restaurants');
+  try {
+    const restaurants = await fetchData(apiURL + '/api/v1/restaurants');
 
-  // your code here
+    console.log(restaurants);
+    restaurants.sort((a, b) => a.name.localeCompare(b.name));
+    console.log(restaurants);
 
-  console.log(restaurants);
-  restaurants.sort((a, b) => a.name.localeCompare(b.name));
-  console.log(restaurants);
+    restaurants.forEach((restaurant) => {
+      if (restaurant) {
+        // ravintolarivin html rivi
+        const rivi = restaurantRow(restaurant);
 
-  for (const restaurant of restaurants) {
-    if (restaurant) {
-      const nimi = document.createElement('td');
-      nimi.innerText = restaurant.name;
+        rivi.addEventListener('click', async () => {
+          try {
+            const korostetut = document.querySelectorAll('.highlight');
+            korostetut.forEach((korostettu) => {
+              korostettu.classList.remove('highlight');
+            });
 
-      const osoite = document.createElement('td');
-      osoite.innerText = restaurant.address;
+            rivi.classList.add('highlight');
+            // hae päivän ruokalista
+            const menu = await fetchData(
+              `${apiURL}/api/v1/restaurants/daily/${restaurant._id}/fi`
+            );
 
-      const rivi = document.createElement('tr');
+            console.log('päivän lista', menu);
 
-      rivi.addEventListener('click', async () => {
-        // hae päivän ruokalista
-        const menu = await fetchData(
-          `${apiURL}/api/v1/restaurants/daily/${restaurant._id}/fi`
-        );
+            // rakenna listan HTML (muista for lause)
 
-        console.log('päivän lista', menu);
-        // rakenna listan HTML (muista for lause)
-        let listaHTML = '';
-        for (const course of menu.courses) {
-          const {name, price, allergens} = course;
-          listaHTML += `<li>
-            <h4>${name}</h4>
-            <p>${price || 'ei hintaa'}</p>
-            <h4>${allergens || 'allergeenejä ei ilmoitettu'}</h4>
-          </li>`;
-        }
+            modaali.showModal();
+            const ravintolaHTML = restaurantModal(restaurant, menu.courses);
+            info.innerHTML = '';
+            info.insertAdjacentHTML('beforeend', ravintolaHTML);
+          } catch (error) {
+            console.error('Error fetching daily menu:', error);
+          }
+        });
 
-        const korostetut = document.querySelectorAll('.highlight');
-        for (const korostettu of korostetut) {
-          korostettu.classList.remove('highlight');
-        }
-
-        rivi.classList.add('highlight');
-        modaali.showModal();
-        const ravintolaHTML = `
-          <header>
-            <h3>${restaurant.name}<h3>
-            <p>${restaurant.company}
-            </p>
-          </header>
-          <address>
-            ${restaurant.address}<br>
-            ${restaurant.postalCode} ${restaurant.city}<br>
-            ${restaurant.phone || 'ei puhelinta'}<br>
-          </address>
-          <div>
-            <h3>Päivän ruokalista</h3>
-            <ul>
-              ${listaHTML}
-            </ul>
-          </div>
-      `;
-        info.innerHTML = '';
-        info.insertAdjacentHTML('beforeend', ravintolaHTML);
-      });
-
-      rivi.append(nimi, osoite);
-      kohde.append(rivi);
-    }
+        kohde.append(rivi);
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching restaurants:', error);
   }
 };
 
+// Call the function to load restaurants
 teeRavintolaLista();
